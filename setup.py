@@ -1,16 +1,23 @@
 import numpy as np
+from typing import List
 
-def createTrulyRandomGame(size: int):
+def hashFunction(row: int, col: int) -> int:
+    return (col << 16) | row
+
+def createGame(size: int) -> List[List[int]]:
+    if size % 2 != 0:
+        print("Grid length must be even for a valid Sudoku game.")
+        return 
+    
+    dct = [[0 for i in range(size)] for i in range(size)]
+
     # Set of ints should be between 1 and the side length of the Sukoku board.
     valid_ints = {num: 0 for num in range(1, size + 1)}
-    board = []
     rng = np.random.default_rng()
 
     # Create our board and place random ints, x represent blank values. Keep track of what numbers we are placing
-    for i in range(size):
-        res = []
-        
-        for j in range(size):
+    for row in range(size):
+        for col in range(size):
             place_int = rng.choice([True, False], p=[0.25, 0.75])
 
             if place_int == True:
@@ -19,14 +26,29 @@ def createTrulyRandomGame(size: int):
                 while valid_ints.get(placement_num, 0) >= size:
                     placement_num = int(rng.integers(1, size + 1))
 
-                res.append(placement_num)
+                dct[row][col] = placement_num
+
                 valid_ints[placement_num] = valid_ints.get(placement_num, 0) + 1
             else:
-                res.append("x")
+                dct[row][col] = ("_")
 
-        board.append(res)
+    return dct
 
-    for line in board:
-        print(line)
+def solveGame(dct: List[List[int]]) -> List[List[int]]:
+    """ 
+    For a grid of length N, to place a value (v), our algorithm must satisfy:
+    1) The cell (x, y) does contain a value.
+    2) The row y has exactly one v:
+        Atleast 1: v_1y or v_1y' or ... has no occurances of v for all y <= N
+        At most 1: if v_1y then not v_1y'
 
-createTrulyRandomGame(4)
+    3) The col x has exactly one v:
+        Atleast 1: v_x1 or v_x1' or ... has no occurance of v, for all y <= N
+        At most 1: v_x1 then not v_x'1
+    4)
+    5)
+
+    
+    """
+
+print(createGame(4))
